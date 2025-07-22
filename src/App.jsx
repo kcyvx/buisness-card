@@ -171,7 +171,6 @@ export default function ModernBusinessCard() {
                 </div>
               </div>
 
-              {/* Technologies avec icônes alignées */}
               <div className="flex flex-wrap gap-3 my-6">
                 {skills.map((skill, index) => (
                   <div 
@@ -185,7 +184,6 @@ export default function ModernBusinessCard() {
                 ))}
               </div>
 
-              {/* Contact info */}
               <div className="space-y-2 text-gray-300 text-sm">
                 <div className="flex items-center space-x-2 hover:text-purple-400 transition-colors">
                   <Mail size={14} />
@@ -197,19 +195,16 @@ export default function ModernBusinessCard() {
                 </div>
               </div>
 
-              {/* Indication de flip */}
               <div className="absolute bottom-4 right-4 text-purple-400 text-xs opacity-70 animate-bounce">
                 Cliquez pour retourner ↻
               </div>
             </div>
           </div>
 
-          {/* Face arrière - fond opaque */}
           <div className="card-face card-back absolute inset-0 bg-gradient-to-br from-purple-900 to-blue-900 rounded-2xl border border-purple-600/50 shadow-2xl overflow-hidden">
             <div className="relative z-10 p-8 h-full">
               <h2 className="text-xl font-bold text-white mb-8 text-center">Compétences Techniques</h2>
               
-              {/* Barres de compétences */}
               <div className="space-y-6">
                 {skills.map((skill, index) => (
                   <div 
@@ -248,9 +243,6 @@ export default function ModernBusinessCard() {
         </div>
       </div>
 
-     
-
-      {/* Instructions */}
       <div className="absolute bottom-8 left-8 text-center text-gray-400 text-sm">
         <p className="flex items-center space-x-2">
           <Zap size={16} className="text-purple-400" />
