@@ -40,10 +40,19 @@ const Zap = ({ size = 16 }) => (
   </svg>
 );
 
+const Volume2 = ({ size = 20 }) => (
+  <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <path d="m19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+  </svg>
+);
+
 export default function ModernBusinessCard() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [hoveredSkill, setHoveredSkill] = useState(null);
   const [particles, setParticles] = useState([]);
+  const [isMuted, setIsMuted] = useState(true);
+  const [audioElement, setAudioElement] = useState(null);
 
   const ReactLogo = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -79,27 +88,52 @@ export default function ModernBusinessCard() {
   useEffect(() => {
     const generateParticles = () => {
       const newParticles = [];
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 30; i++) {
         newParticles.push({
           id: i,
           x: Math.random() * 100,
           y: Math.random() * 100,
-          size: Math.random() * 4 + 1,
+          size: Math.random() * 6 + 2,
           delay: Math.random() * 2
         });
       }
       setParticles(newParticles);
     };
     generateParticles();
+    
+    // Initialiser l'élément audio
+    const audio = new Audio('./background-music.mp3'); // Placez votre fichier MP3 dans le dossier public
+    audio.loop = true;
+    audio.volume = 0.3; // Volume modéré
+    setAudioElement(audio);
+    
+    return () => {
+      if (audio) {
+        audio.pause();
+      }
+    };
   }, []);
 
+  const toggleAudio = () => {
+    if (audioElement) {
+      if (isMuted) {
+        audioElement.play().catch(e => console.log('Autoplay prevented:', e));
+        setIsMuted(false);
+      } else {
+        audioElement.pause();
+        setIsMuted(true);
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {particles.map((particle) => (
           <div
             key={particle.id}
-            className="absolute bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full opacity-20 animate-pulse"
+            className="absolute bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full opacity-30 animate-pulse"
             style={{
               left: `${particle.x}%`,
               top: `${particle.y}%`,
@@ -125,6 +159,21 @@ export default function ModernBusinessCard() {
           50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6), 0 0 60px rgba(59, 130, 246, 0.4); }
         }
         
+        @keyframes audioWave {
+          0%, 100% { transform: scaleY(1); }
+          50% { transform: scaleY(1.2); }
+        }
+        
+        @keyframes diagonalStrike {
+          from { width: 0; }
+          to { width: 141.42%; }
+        }
+        
+        @keyframes slideIn {
+          from { transform: translateX(-100px); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        
         .card-container {
           perspective: 1000px;
         }
@@ -145,7 +194,38 @@ export default function ModernBusinessCard() {
         .card-back {
           transform: rotateY(180deg);
         }
+        
+        .audio-button {
+          animation: slideIn 1s ease-out 0.5s both;
+        }
+        
+        .audio-wave {
+          animation: audioWave 1.5s ease-in-out infinite;
+        }
+        
+        .diagonal-strike-line {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          height: 2px;
+          background: white;
+          transform: translate(-50%, -50%) rotate(-45deg);
+          transform-origin: center;
+          animation: diagonalStrike 0.3s ease-out forwards;
+        }
       `}</style>
+
+      {/* Bouton Audio */}
+      <button
+        onClick={toggleAudio}
+        className="audio-button fixed top-8 left-8 z-50 w-12 h-12 rounded-full bg-gray-800/80 backdrop-blur-lg border border-gray-600/50 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 text-gray-300 hover:text-white shadow-lg hover:shadow-xl cursor-pointer"
+        title={isMuted ? 'Activer la musique' : 'Désactiver la musique'}
+      >
+        <div className="relative">
+          <Volume2 size={20} />
+          {isMuted && <div className="diagonal-strike-line" />}
+        </div>
+      </button>
 
       <div className="card-container">
         <div 
@@ -160,14 +240,14 @@ export default function ModernBusinessCard() {
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
                    <img 
-                    src="/moi.png" 
+                    src="./moi.png" 
                     alt="Thomas Galabert"
                     className="w-full h-full object-cover rounded-full"
                   />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-white mb-1">Thomas Galabert</h1>
-                  <p className="text-purple-300 text-sm font-medium">Développeur Frond-End</p>
+                  <p className="text-purple-300 text-sm font-medium">Développeur Front-End</p>
                 </div>
               </div>
 
@@ -201,7 +281,8 @@ export default function ModernBusinessCard() {
             </div>
           </div>
 
-          <div className="card-face card-back absolute inset-0 bg-gradient-to-br from-purple-900 to-blue-900 rounded-2xl border border-purple-600/50 shadow-2xl overflow-hidden">
+         <div className="card-face card-back absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700 shadow-2xl overflow-hidden">
+
             <div className="relative z-10 p-8 h-full">
               <h2 className="text-xl font-bold text-white mb-8 text-center">Compétences Techniques</h2>
               
