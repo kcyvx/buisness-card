@@ -88,7 +88,7 @@ export default function ModernBusinessCard() {
   useEffect(() => {
     const generateParticles = () => {
       const newParticles = [];
-      const particleCount = window.innerWidth < 768 ? 15 : 30; // Moins de particules sur mobile
+      const particleCount = window.innerWidth < 768 ? 15 : 30; 
       for (let i = 0; i < particleCount; i++) {
         newParticles.push({
           id: i,
@@ -102,11 +102,8 @@ export default function ModernBusinessCard() {
     };
     
     generateParticles();
-    
-    // Regenerer les particules lors du redimensionnement
     window.addEventListener('resize', generateParticles);
     
-    // Initialiser l'élément audio
     const audio = new Audio('./background-music.mp3');
     audio.loop = true;
     audio.volume = 0.3;
@@ -228,7 +225,6 @@ export default function ModernBusinessCard() {
         }
       `}</style>
 
-      {/* Bouton Audio */}
       <button
         onClick={toggleAudio}
         className="audio-button fixed top-4 left-4 sm:top-8 sm:left-8 z-50 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-800/80 backdrop-blur-lg border border-gray-600/50 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 text-gray-300 hover:text-white shadow-lg hover:shadow-xl cursor-pointer"
@@ -245,13 +241,11 @@ export default function ModernBusinessCard() {
           className={`card relative w-full sm:w-[520px] h-[500px] sm:h-[340px] cursor-pointer ${isFlipped ? 'flipped' : ''}`}
           onClick={() => setIsFlipped(!isFlipped)}
         > 
-          {/* Face avant */}
           <div className="card-face absolute inset-0 bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-xl rounded-2xl border border-gray-700/50 shadow-2xl overflow-hidden">
             <div className="shimmer-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 animate-pulse" 
                  style={{ animation: 'shimmer 3s ease-in-out infinite' }} />
             
             <div className="relative z-10 p-6 sm:p-8 h-full flex flex-col justify-between">
-              {/* Header avec photo et infos */}
               <div className="flex flex-col sm:flex-row items-center sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
                 <div className="w-20 h-20 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-lg flex-shrink-0">
                    <img 
@@ -266,7 +260,6 @@ export default function ModernBusinessCard() {
                 </div>
               </div>
 
-              {/* Compétences */}
               <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-3 my-6">
                 {skills.map((skill, index) => (
                   <div 
@@ -280,7 +273,6 @@ export default function ModernBusinessCard() {
                 ))}
               </div>
 
-              {/* Contact */}
               <div className="space-y-3 sm:space-y-2 text-gray-300 text-sm">
                 <div className="flex items-center justify-center sm:justify-start space-x-2 hover:text-purple-400 transition-colors">
                   <Mail size={14} />
@@ -292,7 +284,6 @@ export default function ModernBusinessCard() {
                 </div>
               </div>
 
-              {/* Instruction pour retourner */}
               <div className="absolute bottom-4 right-4 text-purple-400 text-xs opacity-70 animate-bounce hidden sm:block">
                 Cliquez pour retourner ↻
               </div>
@@ -302,7 +293,6 @@ export default function ModernBusinessCard() {
             </div>
           </div>
 
-          {/* Face arrière */}
           <div className="card-face card-back absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700 shadow-2xl overflow-hidden">
             <div className="relative z-10 p-6 sm:p-8 h-full">
               <h2 className="text-lg sm:text-xl font-bold text-white mb-6 sm:mb-8 text-center">Compétences Techniques</h2>
@@ -347,7 +337,6 @@ export default function ModernBusinessCard() {
         </div>
       </div>
 
-      {/* Message en bas */}
       <div className="absolute bottom-8 left-8 text-center text-gray-400 text-sm">
         <p className="flex items-center space-x-2">
           <Zap size={16} className="text-purple-400" />
