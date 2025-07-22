@@ -88,29 +88,35 @@ export default function ModernBusinessCard() {
   useEffect(() => {
     const generateParticles = () => {
       const newParticles = [];
-      for (let i = 0; i < 30; i++) {
+      const particleCount = window.innerWidth < 768 ? 15 : 30; // Moins de particules sur mobile
+      for (let i = 0; i < particleCount; i++) {
         newParticles.push({
           id: i,
           x: Math.random() * 100,
           y: Math.random() * 100,
-          size: Math.random() * 6 + 2,
+          size: Math.random() * (window.innerWidth < 768 ? 4 : 6) + 2,
           delay: Math.random() * 2
         });
       }
       setParticles(newParticles);
     };
+    
     generateParticles();
     
+    // Regenerer les particules lors du redimensionnement
+    window.addEventListener('resize', generateParticles);
+    
     // Initialiser l'élément audio
-    const audio = new Audio('./background-music.mp3'); // Placez votre fichier MP3 dans le dossier public
+    const audio = new Audio('./background-music.mp3');
     audio.loop = true;
-    audio.volume = 0.3; // Volume modéré
+    audio.volume = 0.3;
     setAudioElement(audio);
     
     return () => {
       if (audio) {
         audio.pause();
       }
+      window.removeEventListener('resize', generateParticles);
     };
   }, []);
 
@@ -127,7 +133,7 @@ export default function ModernBusinessCard() {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-2 sm:p-4">
 
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {particles.map((particle) => (
@@ -213,45 +219,55 @@ export default function ModernBusinessCard() {
           transform-origin: center;
           animation: diagonalStrike 0.3s ease-out forwards;
         }
+
+        /* Masquer le shimmer sur mobile pour de meilleures performances */
+        @media (max-width: 640px) {
+          .shimmer-effect {
+            display: none;
+          }
+        }
       `}</style>
 
       {/* Bouton Audio */}
       <button
         onClick={toggleAudio}
-        className="audio-button fixed top-8 left-8 z-50 w-12 h-12 rounded-full bg-gray-800/80 backdrop-blur-lg border border-gray-600/50 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 text-gray-300 hover:text-white shadow-lg hover:shadow-xl cursor-pointer"
+        className="audio-button fixed top-4 left-4 sm:top-8 sm:left-8 z-50 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-800/80 backdrop-blur-lg border border-gray-600/50 flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 text-gray-300 hover:text-white shadow-lg hover:shadow-xl cursor-pointer"
         title={isMuted ? 'Activer la musique' : 'Désactiver la musique'}
       >
         <div className="relative">
-          <Volume2 size={20} />
+          <Volume2 size={window.innerWidth < 640 ? 16 : 20} />
           {isMuted && <div className="diagonal-strike-line" />}
         </div>
       </button>
 
-      <div className="card-container">
+      <div className="card-container flex justify-center w-full max-w-[95vw] sm:max-w-none">
         <div 
-          className={`card relative w-[520px] h-[340px] cursor-pointer ${isFlipped ? 'flipped' : ''}`}
+          className={`card relative w-full sm:w-[520px] h-[500px] sm:h-[340px] cursor-pointer ${isFlipped ? 'flipped' : ''}`}
           onClick={() => setIsFlipped(!isFlipped)}
-        >
+        > 
+          {/* Face avant */}
           <div className="card-face absolute inset-0 bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-xl rounded-2xl border border-gray-700/50 shadow-2xl overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 animate-pulse" 
+            <div className="shimmer-effect absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 animate-pulse" 
                  style={{ animation: 'shimmer 3s ease-in-out infinite' }} />
             
-            <div className="relative z-10 p-8 h-full flex flex-col justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+            <div className="relative z-10 p-6 sm:p-8 h-full flex flex-col justify-between">
+              {/* Header avec photo et infos */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <div className="w-20 h-20 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-lg flex-shrink-0">
                    <img 
                     src="./moi.png" 
                     alt="Thomas Galabert"
                     className="w-full h-full object-cover rounded-full"
                   />
                 </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white mb-1">Thomas Galabert</h1>
-                  <p className="text-purple-300 text-sm font-medium">Développeur Front-End</p>
+                <div className="text-center sm:text-left">
+                  <h1 className="text-2xl sm:text-2xl font-bold text-white mb-1">Thomas Galabert</h1>
+                  <p className="text-purple-300 text-base sm:text-sm font-medium">Développeur Front-End</p>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-3 my-6">
+              {/* Compétences */}
+              <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-3 my-6">
                 {skills.map((skill, index) => (
                   <div 
                     key={skill.name}
@@ -259,40 +275,47 @@ export default function ModernBusinessCard() {
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     <span className="flex-shrink-0">{skill.icon}</span>
-                    <span>{skill.name}</span>
+                    <span className="text-xs sm:text-sm">{skill.name}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="space-y-2 text-gray-300 text-sm">
-                <div className="flex items-center space-x-2 hover:text-purple-400 transition-colors">
+              {/* Contact */}
+              <div className="space-y-3 sm:space-y-2 text-gray-300 text-sm">
+                <div className="flex items-center justify-center sm:justify-start space-x-2 hover:text-purple-400 transition-colors">
                   <Mail size={14} />
-                  <span>thomas.galabert07@gmail.com</span>
+                  <span className="text-xs sm:text-sm">thomas.galabert07@gmail.com</span>
                 </div>
-                <div className="flex items-center space-x-2 hover:text-purple-400 transition-colors">
+                <div className="flex items-center justify-center sm:justify-start space-x-2 hover:text-purple-400 transition-colors">
                   <Phone size={14} />
-                  <span>+33 6 11 84 01 86</span>
+                  <span className="text-xs sm:text-sm">+33 6 11 84 01 86</span>
                 </div>
               </div>
 
-              <div className="absolute bottom-4 right-4 text-purple-400 text-xs opacity-70 animate-bounce">
+              {/* Instruction pour retourner */}
+              <div className="absolute bottom-4 right-4 text-purple-400 text-xs opacity-70 animate-bounce hidden sm:block">
                 Cliquez pour retourner ↻
+              </div>
+              <div className="text-purple-400 text-xs opacity-70 animate-bounce text-center sm:hidden mt-4">
+                Touchez pour voir les compétences ↻
               </div>
             </div>
           </div>
 
-         <div className="card-face card-back absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700 shadow-2xl overflow-hidden">
-
-            <div className="relative z-10 p-8 h-full">
-              <h2 className="text-xl font-bold text-white mb-8 text-center">Compétences Techniques</h2>
+          {/* Face arrière */}
+          <div className="card-face card-back absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700 shadow-2xl overflow-hidden">
+            <div className="relative z-10 p-6 sm:p-8 h-full">
+              <h2 className="text-lg sm:text-xl font-bold text-white mb-6 sm:mb-8 text-center">Compétences Techniques</h2>
               
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {skills.map((skill, index) => (
                   <div 
                     key={skill.name}
                     className="group"
                     onMouseEnter={() => setHoveredSkill(skill.name)}
                     onMouseLeave={() => setHoveredSkill(null)}
+                    onTouchStart={() => setHoveredSkill(skill.name)}
+                    onTouchEnd={() => setHoveredSkill(null)}
                   >
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-white text-sm font-medium flex items-center space-x-2">
@@ -324,6 +347,7 @@ export default function ModernBusinessCard() {
         </div>
       </div>
 
+      {/* Message en bas */}
       <div className="absolute bottom-8 left-8 text-center text-gray-400 text-sm">
         <p className="flex items-center space-x-2">
           <Zap size={16} className="text-purple-400" />
